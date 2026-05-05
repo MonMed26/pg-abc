@@ -1,0 +1,34 @@
+node_modules
+npm-debug.log
+
+# Env & runtime data — JANGAN masuk image!
+.env
+.env.local
+.env.*.local
+data/*
+!data/.gitkeep
+
+# Git / IDE / OS
+.git
+.gitignore
+.gitattributes
+.vscode
+.idea
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
+logs
+
+# Playwright artifacts
+.playwright-mcp
+test-results
+playwright-report
+
+# Dev helpers (tidak perlu di image)
+tools
+
+# Docs/meta tidak wajib di image tapi kecil, keep sederhana
+# Dockerfile.* kalau ada variant lain
+Dockerfile.dev

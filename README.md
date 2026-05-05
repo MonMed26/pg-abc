@@ -86,6 +86,59 @@ node src/server.js
 - **API Docs (Swagger UI)**: <http://localhost:3000/docs>
 - Raw OpenAPI spec: <http://localhost:3000/docs.json>
 
+## Menjalankan via Docker
+
+Image berbasis `mcr.microsoft.com/playwright:v1.59.1-jammy` (sudah include Chromium + semua lib Linux-nya), Node 20, non-root user.
+
+### 1. Build & run dengan docker compose (recommended)
+
+Pastikan `.env` sudah ter-isi. Folder `./data` akan di-mount sebagai volume (persist session + SQLite DB).
+
+```powershell
+# Build image
+docker compose build
+
+# Start container (detached)
+docker compose up -d
+
+# Tail log
+docker compose logs -f gateway
+
+# Stop
+docker compose down
+```
+
+Mau ubah port host? Set `HOST_PORT=8080 docker compose up -d` atau tambah `HOST_PORT=8080` ke `.env`.
+
+### 2. Build & run manual via docker CLI
+
+```powershell
+# Build
+docker build -t bca-merchant-qris-gateway .
+
+# Run
+docker run -d `
+  --name bca-qris-gateway `
+  --restart unless-stopped `
+  -p 3000:3000 `
+  --env-file .env `
+  -e SESSION_FILE=/app/data/session.json `
+  -e DB_PATH=/app/data/payments.db `
+  -v ${PWD}/data:/app/data `
+  bca-merchant-qris-gateway
+
+# Healthcheck otomatis via HEALTHCHECK di Dockerfile
+docker ps   # kolom STATUS -> "healthy" setelah ±20 detik
+```
+
+### Catatan Docker
+
+- **Ukuran image** ~1.5 GB (Chromium + system libs). Trade-off untuk stabilitas scraper.
+- **Persist data**: `./data` di host ↔ `/app/data` di container menyimpan `payments.db` + `session.json`. **Backup folder ini!**
+- **Memory**: compose sudah limit ke 1 GB (cukup untuk 1 Chromium instance). Tune di `docker-compose.yml` kalau perlu.
+- **Update**: setelah `git pull`, rebuild dengan `docker compose up -d --build`.
+- **Timezone**: logic poller pakai `Asia/Jakarta` eksplisit via `Intl`, jadi container default UTC tidak masalah.
+
 ## REST API
 
 Semua `/api/*` butuh `Authorization: Bearer <API_TOKEN>` kalau `API_TOKEN` ter-set.
