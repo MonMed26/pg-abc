@@ -1,0 +1,32 @@
+{
+  "name": "bca-merchant-qris",
+  "version": "0.1.0",
+  "description": "Unofficial scraper for BCA Merchant QRIS portal (qr.klikbca.com) - mutasi/inquiry transaksi",
+  "private": true,
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js",
+    "scrape:once": "node src/scripts/scrape-once.js",
+    "install:browser": "playwright install chromium"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "dependencies": {
+    "better-sqlite3": "^11.5.0",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.2",
+    "playwright": "^1.48.0",
+    "qrcode": "^1.5.4",
+    "swagger-ui-express": "^5.0.1"
+  },
+  "keywords": [
+    "bca",
+    "qris",
+    "merchant",
+    "scraper",
+    "mutasi"
+  ],
+  "license": "UNLICENSED"
+}

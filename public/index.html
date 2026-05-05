@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BCA QRIS Payment Gateway — Demo</title>
+<link rel="stylesheet" href="/style.css" />
+</head>
+<body>
+<header>
+  <div class="header-row">
+    <div>
+      <h1>BCA QRIS Payment Gateway — Demo</h1>
+      <p>Create dynamic QRIS, polling otomatis cek mutasi, webhook on paid.</p>
+    </div>
+    <nav class="header-nav">
+      <a href="/docs" target="_blank" rel="noopener">📘 API Docs</a>
+      <a href="/docs.json" target="_blank" rel="noopener">openapi.json</a>
+    </nav>
+  </div>
+</header>
+
+<div class="container">
+  <section class="card">
+    <h2>Buat Payment Baru</h2>
+    <div class="row"><label for="amount">Amount (Rp, integer)</label>
+      <input id="amount" type="number" min="1" step="1" value="10000" /></div>
+    <div class="row"><label for="webhook">Webhook URL (opsional)</label>
+      <input id="webhook" type="url" placeholder="https://yourapp.example.com/webhook" /></div>
+    <div class="row"><label for="ttl">Expires (detik, opsional)</label>
+      <input id="ttl" type="number" min="30" max="86400" placeholder="default dari env" /></div>
+    <div class="row"><label for="meta">Metadata JSON (opsional)</label>
+      <textarea id="meta" placeholder='{"orderId":"123","note":"test"}'></textarea></div>
+    <div class="row"><label for="apiToken">API Token (kalau API_TOKEN diaktifkan)</label>
+      <input id="apiToken" type="text" placeholder="kosongkan kalau dev lokal" /></div>
+    <div class="actions">
+      <button id="btnCreate">Create Payment</button>
+      <button id="btnRefresh" class="btn-secondary">Refresh List</button>
+    </div>
+  </section>
+
+  <section class="card" id="qrCard" style="display:none">
+    <h2>QR Pembayaran Aktif</h2>
+    <div class="qr-box">
+      <img id="qrImg" alt="QRIS" />
+      <div class="total-amount">Rp <span id="totalAmount">-</span>
+        <span class="unique">(+<span id="uniqueCode">-</span>)</span></div>
+      <div><span class="badge" id="statusBadge">pending</span></div>
+      <div class="countdown" id="countdown"></div>
+    </div>
+    <dl class="info-grid">
+      <dt>Payment ID</dt><dd><span id="payId">-</span> <button class="copy-btn" data-copy="payId">copy</button></dd>
+      <dt>Base Amount</dt><dd>Rp <span id="baseAmount">-</span></dd>
+      <dt>Unique Code</dt><dd><span id="uniqueCodeFull">-</span></dd>
+      <dt>Expires At</dt><dd id="expiresAt">-</dd>
+      <dt>QRIS String</dt><dd><code id="qrisString"></code> <button class="copy-btn" data-copy="qrisString">copy</button></dd>
+      <dt id="paidAtRow" style="display:none">Paid At</dt><dd id="paidAtVal" style="display:none">-</dd>
+      <dt id="rrnRow" style="display:none">RRN</dt><dd id="rrnVal" style="display:none">-</dd>
+      <dt id="issuerRow" style="display:none">Issuer</dt><dd id="issuerVal" style="display:none">-</dd>
+    </dl>
+    <div class="actions" style="margin-top:16px">
+      <button id="btnCancel" class="btn-danger">Cancel Payment</button>
+    </div>
+  </section>
+
+  <section class="card" style="grid-column: 1 / -1">
+    <h2>Riwayat Payment</h2>
+    <table id="historyTable">
+      <thead><tr>
+        <th>ID</th><th>Status</th><th>Amount</th><th>Code</th>
+        <th>Total</th><th>Created</th><th>Paid / Issuer</th>
+      </tr></thead>
+      <tbody></tbody>
+    </table>
+    <div class="empty" id="emptyMsg">Belum ada payment. Buat dulu di atas.</div>
+  </section>
+</div>
+
+<div class="toast" id="toast"></div>
+<script src="/app.js"></script>
+</body>
+</html>
